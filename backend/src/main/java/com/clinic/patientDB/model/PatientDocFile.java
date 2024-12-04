@@ -5,8 +5,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDate;
-
 @Entity
 @Table(name="patient_doc_files")
 @JsonInclude(JsonInclude.Include.NON_NULL)
