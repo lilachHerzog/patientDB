@@ -12,19 +12,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name="visit")
+@Table(name="visits")
 public class Visit implements Serializable {
     @JsonIgnore
     @ManyToOne(optional = false)
     @JoinColumn(name = "patient_id", nullable = false)
     private Patient patient;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(name = "visit_date", nullable = false)
     private LocalDate visitDate;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
     @OneToMany(mappedBy = "visit", cascade = CascadeType.ALL)
     private List<PatientPdfFile> patientPdfFile = new ArrayList<>();
@@ -33,7 +33,22 @@ public class Visit implements Serializable {
     private List<PatientDocFile> patientDocFile = new ArrayList<>();
 
     public Visit() {
+        this.visitDate = LocalDate.now();
+//        this.patientPdfFile = new ArrayList<>();
+//        this.patientDocFile = new ArrayList<>();
+    }
+    public Visit(Patient patient) {
+        this.patient = patient;
+        this.visitDate = LocalDate.now();
+//        this.patientPdfFile = new ArrayList<>();
+//        this.patientDocFile = new ArrayList<>();
+    }
 
+    public Visit(Patient patient, LocalDate visitDate) {
+        this.patient = patient;
+        this.visitDate = visitDate;
+//        this.patientPdfFile = new ArrayList<>();
+//        this.patientDocFile = new ArrayList<>();
     }
 
 
@@ -128,10 +143,7 @@ public class Visit implements Serializable {
         return dateTime;
     }
 
-    public Visit(Patient patient, LocalDate visitDate) {
-        this.patient = patient;
-        this.visitDate = visitDate;
-    }
+
 
 
 

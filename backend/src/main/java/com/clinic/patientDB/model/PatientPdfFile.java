@@ -9,21 +9,17 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name="patientPdfFIle")
+@Table(name="patient_pdf_files")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PatientPdfFile  implements Serializable {
-
     @Id
     String filename;
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long id;
-
-    String visitType;
-
     @JsonIgnore
     @ManyToOne(optional = false)
     @JoinColumn(name = "visit_id", nullable = false)
     private Visit visit;
+
+    String visitType;
     LocalDateTime updateDate;
 
 

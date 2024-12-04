@@ -8,19 +8,16 @@ import java.io.Serializable;
 import java.time.LocalDate;
 
 @Entity
-@Table(name="patientDocFIle")
+@Table(name="patient_doc_files")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PatientDocFile  implements Serializable {
     @Id
     String filename;
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long id;
-
-    String visitType;
-    @JsonIgnore
     @ManyToOne(optional = false)
     @JoinColumn(name = "visit_id", nullable = false)
     private Visit visit;
+    @JsonIgnore
+    String visitType;
 
     public PatientDocFile() {
     }
