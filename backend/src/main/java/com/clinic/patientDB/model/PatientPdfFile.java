@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name="patient_pdf_files")
@@ -60,5 +61,19 @@ public class PatientPdfFile  implements Serializable {
         this.visitType = visitType;
         this.visit = visit;
         this.filename = filename;
+    }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        PatientPdfFile that = (PatientPdfFile) obj;
+        return Objects.equals(filename, that.filename);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(filename);
     }
 }

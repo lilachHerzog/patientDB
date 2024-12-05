@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Objects;
+
 @Entity
 @Table(name="patient_doc_files")
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -40,5 +42,19 @@ public class PatientDocFile  implements Serializable {
         this.visitType = visitType;
         this.filename = filename;
         this.visit = visit;
+    }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        PatientDocFile that = (PatientDocFile) obj;
+        return Objects.equals(filename, that.filename);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(filename);
     }
 }

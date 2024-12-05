@@ -1,6 +1,8 @@
 package com.clinic.patientDB.model;
 
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -9,9 +11,10 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
-@Table(name="visits")
+@Table(name = "visits")
 public class Visit implements Serializable {
     @JsonIgnore
     @ManyToOne(optional = false)
@@ -33,21 +36,15 @@ public class Visit implements Serializable {
 
     public Visit() {
         this.visitDate = LocalDate.now();
-//        this.patientPdfFile = new ArrayList<>();
-//        this.patientDocFile = new ArrayList<>();
     }
     public Visit(Patient patient) {
         this.patient = patient;
         this.visitDate = LocalDate.now();
-//        this.patientPdfFile = new ArrayList<>();
-//        this.patientDocFile = new ArrayList<>();
     }
 
     public Visit(Patient patient, LocalDate visitDate) {
         this.patient = patient;
         this.visitDate = visitDate;
-//        this.patientPdfFile = new ArrayList<>();
-//        this.patientDocFile = new ArrayList<>();
     }
 
 
@@ -72,7 +69,7 @@ public class Visit implements Serializable {
         if(!patientDocFile.contains(newDocFile)){
             patientDocFile.add(newDocFile);
         } else {
-            System.out.println(newDocFile.filename + "file already exists");
+            System.out.println(newDocFile.filename + " file already exists");
         }
         return newDocFile;
     }
@@ -94,13 +91,12 @@ public class Visit implements Serializable {
             patientPdfFile.add(newPdfFile);
         }
         else {
-            System.out.println(newPdfFile.filename + "file already exists");
+            System.out.println(newPdfFile.filename + " file already exists");
         }
         return newPdfFile;
     }
 
-    public PatientPdfFile addPatientPdfFile(String updateDateStr, String actionType, String filename) {
-        LocalDateTime updateDate = LocalDateTime.parse(updateDateStr, ExtractedFileInfo.updateFormatter);
+    public PatientPdfFile addPatientPdfFile(LocalDateTime updateDate, String actionType, String filename) {
         return addPatientPdfFile(new PatientPdfFile(updateDate, actionType, filename, this));
     }
 
@@ -110,36 +106,6 @@ public class Visit implements Serializable {
 
     public void setPatient(Patient patient) {
         this.patient = patient;
-    }
-
-
-//    public String separateAdditiveDate(String date) {
-//        Character identificationType = date.charAt(date.length() - 1);
-//        if (Character.isLetter(identificationType)) {
-//            setAdditives(identificationType);
-//            date.substring(0, date.length() - 1);
-//        }
-//        return date;
-//    }
-
-
-
-    public LocalDate convertStringToDate(String dateString) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyy");
-        LocalDate time = LocalDate.parse(dateString, formatter);
-        return time;
-
-    }
-    public LocalTime convertStringToTime(String timeString) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HHmm");
-        LocalTime time = LocalTime.parse(timeString, formatter);
-        return time;
-    }
-
-    public LocalDateTime convertStringToDateAndTime(String dateTimeString) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("{HHmm ddMMyy}");
-        LocalDateTime dateTime = LocalDateTime.parse(dateTimeString, formatter);
-        return dateTime;
     }
 
 
