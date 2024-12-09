@@ -2,6 +2,7 @@ package com.clinic.patientDB.model;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -42,6 +43,21 @@ public class Patient implements Serializable {
     }
 
 
+    public List<LocalDate> getPatientsVisitDatesById(){
+        List<LocalDate> visitIds = new ArrayList<>();
+        for (Visit visit: this.getVisits()){
+            visitIds.add(visit.getVisitDate());
+        }
+        return visitIds;
+    }
+
+    public List<Long> getPatientsVisitsById(){
+        List<Long> visitIds = new ArrayList<>();
+        for (Visit visit: this.getVisits()){
+            visitIds.add(visit.getId());
+        }
+        return visitIds;
+    }
 
     public void setId(String id) {
 
@@ -127,6 +143,13 @@ public class Patient implements Serializable {
 
     public void setIdType(String idType) {
         this.idType = idType;
+    }
+    public List<LocalDate> getVisitsDates(){
+        List<LocalDate> dates = new ArrayList<>();
+        for (Visit visit : visits) {
+            dates.add(visit.getVisitDate());
+        }
+        return dates;
     }
 }
 

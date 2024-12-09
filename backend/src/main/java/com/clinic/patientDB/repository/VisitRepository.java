@@ -13,7 +13,7 @@ import java.util.Optional;
 
 
 @Repository
-public interface VisitRepository extends JpaRepository<Visit, LocalDate> {
+public interface VisitRepository extends JpaRepository<Visit, Long> {
     Optional<Visit> findByPatientAndVisitDate(Patient patient, LocalDate date);
     @Query("SELECT v FROM Visit v WHERE v.patient.id = :patientId ORDER BY v.visitDate DESC")
     Visit findFirstByPatientIdOrderByVisitDateDesc(@Param("patientId") Long patientId);

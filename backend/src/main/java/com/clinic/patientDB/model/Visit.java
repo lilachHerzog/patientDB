@@ -15,7 +15,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Entity
-@Table(name="visits")
+@Table(name="visits", uniqueConstraints=@UniqueConstraint(columnNames= {"visit_date"}))
 public class Visit implements Serializable {
     @JsonIgnore
     @ManyToOne(optional = false)
@@ -144,9 +144,7 @@ public class Visit implements Serializable {
     }
 
 
-
-
-
-
-
+    public Long getId() {
+        return id;
+    }
 }

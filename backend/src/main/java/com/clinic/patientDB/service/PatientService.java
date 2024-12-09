@@ -171,6 +171,8 @@ public class PatientService {
         patientRepository.delete(patient);
     }
 
+
+
     @Transactional
     public Patient updatePatient(Long id, Patient updatedPatient) {
         return patientRepository.findById(id).map(patient -> {
