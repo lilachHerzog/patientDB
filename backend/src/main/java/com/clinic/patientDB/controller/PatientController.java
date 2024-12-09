@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
 import java.awt.*;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -89,29 +90,29 @@ public class PatientController {
 
 
 
-     @DeleteMapping("/patients/{id}")
-    public ResponseEntity<Boolean> deleteFile(@PathVariable String filename ){
-         ExtractedFileInfo extractedFileInfo = new ExtractedFileInfo(filename);
-        Patient patient = patientRepository.findById(extractedFileInfo.getId()).orElse(null);
-        if (patient == null) {
-            return ResponseEntity.ok(patientRepository.findAll().contains(patient));//status(HttpStatus.NOT_FOUND).body("patient with ID " + extractedFileInfo.getId() + " not found");
-        }
-        Visit visit = visitRepository.findByPatientAndVisitDate(patient, extractedFileInfo.getVisitDate()).orElse(null);
-         if (visit == null) {
-             return ResponseEntity.ok(patient.getVisits().contains(visit));//HttpStatus.NOT_FOUND).body("No visit found for " + extractedFileInfo.getName() + " on " + extractedFileInfo.getVisitDate());
-         }
-         if (extractedFileInfo.getUpdateDateAndTime() == null){
-             PatientDocFile docFile = visit.getPatientDocFile(filename).orElse(null);
-//             if (docFile == null) {
-//                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(extractedFileInfo.getFileType() + "not found for patient " + extractedFileInfo.getName() + " on " + extractedFileInfo.getVisitDate());
-//             }
-//             visit.getPatientDocFile().remove(docFile);
-             return ResponseEntity.ok(visit.getPatientDocFile().remove(docFile));
-         } else  {
-             PatientPdfFile pdfFile = visit.getPatientPdfFile(filename).orElse(null);
-             return ResponseEntity.ok(visit.getPatientDocFile().remove(pdfFile));
-         }
-    }
+//     @DeleteMapping("/patients/{id}")
+//    public ResponseEntity<Boolean> deleteFile(@PathVariable String filename ){
+//         ExtractedFileInfo extractedFileInfo = new ExtractedFileInfo(filename);
+//        Patient patient = patientRepository.findById(extractedFileInfo.getId()).orElse(null);
+//        if (patient == null) {
+//            return ResponseEntity.ok(patientRepository.findAll().contains(patient));//status(HttpStatus.NOT_FOUND).body("patient with ID " + extractedFileInfo.getId() + " not found");
+//        }
+//        Visit visit = visitRepository.findByPatientAndVisitDate(patient, extractedFileInfo.getVisitDate()).orElse(null);
+//         if (visit == null) {
+//             return ResponseEntity.ok(patient.getVisits().contains(visit));//HttpStatus.NOT_FOUND).body("No visit found for " + extractedFileInfo.getName() + " on " + extractedFileInfo.getVisitDate());
+//         }
+//         if (extractedFileInfo.getUpdateDateAndTime() == null){
+//             PatientDocFile docFile = visit.getPatientDocFile(filename);//.orElse(null);
+////             if (docFile == null) {
+////                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(extractedFileInfo.getFileType() + "not found for patient " + extractedFileInfo.getName() + " on " + extractedFileInfo.getVisitDate());
+////             }
+////             visit.getPatientDocFile().remove(docFile);
+//             return ResponseEntity.ok(visit.getPatientDocFile().remove(docFile));
+//         } else  {
+//             PatientPdfFile pdfFile = visit.getPatientPdfFile(filename);//.orElse(null);
+//             return ResponseEntity.ok(visit.getPatientDocFile().remove(pdfFile));
+//         }
+//    }
 
 //    @PutMapping("/patients/{id}")
 //    public ResponseEntity<Object> GetFile( @PathVariable String filename ){
@@ -181,9 +182,17 @@ public class PatientController {
         }
     }
 
+    @RequestMapping(value = "/numOfVisits/{id}", method = RequestMethod.GET)
+    public ResponseEntity<Integer> numOfVisits(@PathVariable Long id) {
+        return ResponseEntity.ok(patientRepository.getById(id).getNumberOfVisits());
+
+    }
+
+
 //    @PostConstruct
 //    public void init() {
-//        Patient patient = new Patient(46854L, "Test Patient", "");
+//        Long id = 46854L;
+//        Patient patient = new Patient(id, "Test Patient", "");
 //        patientRepository.save(patient);
 //        Visit visit = new Visit(patient);
 ////        visit.setPatient(patient);
@@ -193,8 +202,14 @@ public class PatientController {
 //        patientRepository.save(patient);
 //
 //        Patient savedPatient = patientRepository.findById(patient.getId()).get();
-//        assertEquals(patient.getName(), savedPatient.getName());
-//        assertEquals(1, savedPatient.getVisits().size());    }
+//        System.out.println("names are equal " + patient.getName().equals(savedPatient.getName()));
+//        System.out.println("savedPatient.getVisits().size(): " + savedPatient.getVisits().size());
+//        List<Patient> allPatients = patientRepository.findAll();
+//        System.out.println("Number of patients in DB: " + allPatients.size());
+//
+//        // מחיקת מטופל לדוגמה
+//        patientRepository.deleteById(id);
+//    }
 
 
 

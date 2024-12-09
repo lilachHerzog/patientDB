@@ -8,6 +8,8 @@ import java.util.regex.Pattern;
 
 public class ExtractedFileInfo {
     public static String filenameRegex = "\\{?(\\d{6} \\d{4})?}?\\s?(\\d{6})(?:_([^_]+(?:_[^_]+)*))?_([A-Za-z])?(\\d+)([A-Za-z])?\\.(pdf|doc)";
+    public static DateTimeFormatter updateFormatter = DateTimeFormatter.ofPattern("ddMMyy HHmm");
+    public static DateTimeFormatter visitTimeFormatter = DateTimeFormatter.ofPattern("ddMMyy");
 
     private LocalDateTime updateDateAndTime;
     private LocalDate visitDate;
@@ -18,7 +20,6 @@ public class ExtractedFileInfo {
     private String fileType;
 
     public static LocalDate extractVisitDate(String date) {
-        DateTimeFormatter visitTimeFormatter = DateTimeFormatter.ofPattern("ddMMyy");
         return LocalDate.parse(date, visitTimeFormatter);
     }
     public static LocalDateTime extractUpdatetDate(String date) {

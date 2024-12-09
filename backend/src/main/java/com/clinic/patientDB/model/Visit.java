@@ -15,7 +15,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Entity
-@Table(name = "visits")
+@Table(name="visits")
 public class Visit implements Serializable {
     @JsonIgnore
     @ManyToOne(optional = false)
@@ -70,7 +70,7 @@ public class Visit implements Serializable {
         if(!patientDocFile.contains(newDocFile)){
             patientDocFile.add(newDocFile);
         } else {
-            System.out.println(newDocFile.filename + " file already exists");
+            System.out.println(newDocFile.filename + "file already exists");
         }
         return newDocFile;
     }
@@ -78,6 +78,14 @@ public class Visit implements Serializable {
         return addPatientDocFile(new PatientDocFile(visitType, filename, this));
     }
 
+    public PatientDocFile getPatientDocFile(String filename) {
+
+        return patientDocFile.get(patientDocFile.indexOf(filename));
+    }
+    public PatientPdfFile getPatientPdfFile(String filename) {
+
+        return patientPdfFile.get(patientPdfFile.indexOf(filename));
+    }
 
     public List<PatientPdfFile> getPatientPdfFile() {
         return patientPdfFile;
@@ -92,21 +100,26 @@ public class Visit implements Serializable {
             patientPdfFile.add(newPdfFile);
         }
         else {
-            System.out.println(newPdfFile.filename + " file already exists");
+            System.out.println(newPdfFile.filename + "file already exists");
         }
         return newPdfFile;
+    }
+
+    public PatientPdfFile addPatientPdfFile(String updateDateStr, String actionType, String filename) {
+        LocalDateTime updateDate = LocalDateTime.parse(updateDateStr, ExtractedFileInfo.updateFormatter);
+        return addPatientPdfFile(new PatientPdfFile(updateDate, actionType, filename, this));
     }
 
     public PatientPdfFile addPatientPdfFile(LocalDateTime updateDate, String actionType, String filename) {
         return addPatientPdfFile(new PatientPdfFile(updateDate, actionType, filename, this));
     }
 
-    public Optional<PatientDocFile> getPatientDocFile(String filename) {
-        return patientDocFile.stream().filter(doc -> doc.getFilename().equals(filename)).findFirst();
-    }
-    public Optional<PatientPdfFile> getPatientPdfFile(String filename) {
-        return patientPdfFile.stream().filter(pdf -> pdf.getFilename().equals(filename)).findFirst();
-    }
+//    public Optional<PatientDocFile> getPatientDocFile(String filename) {
+//        return patientDocFile.stream().filter(doc -> doc.getFilename().equals(filename)).findFirst();
+//    }
+//    public Optional<PatientPdfFile> getPatientPdfFile(String filename) {
+//        return patientPdfFile.stream().filter(pdf -> pdf.getFilename().equals(filename)).findFirst();
+//    }
 
     public Patient getPatient() {
         return patient;
@@ -129,6 +142,9 @@ public class Visit implements Serializable {
     public int hashCode() {
         return Objects.hash(visitDate);
     }
+
+
+
 
 
 

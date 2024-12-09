@@ -60,7 +60,9 @@ public class Patient implements Serializable {
         this.name = name;
     }
 
-
+    public int getNumberOfVisits() {
+        return visits.size();
+    }
 
 
     public Patient(Long id, String name, String idType) {
@@ -78,7 +80,16 @@ public class Patient implements Serializable {
         this.visits = visits;
     }
 
-
+//    public Visit addVisit(Visit visit) {
+//        if(!visits.contains(visit)){
+//            visits.add(visit);
+//        }
+//        return visit;
+//    }
+//
+//    public Visit addVisit(LocalDate updateDate) {
+//        return addVisit(new Visit(this, updateDate));
+//    }
 //    public Visit addVisit(Visit visit) {
 //        if(!visits.contains(visit)){
 //            System.out.println("there is no "+visit.getVisitDate() +" in ");
@@ -88,7 +99,15 @@ public class Patient implements Serializable {
 //        return visit;
 //    }
 
-
+//    public Visit addVisit(Visit visit) {
+//        if(!visits.contains(visit)){
+//            visits.add(visit);
+//        }
+//        return visit;
+//    }
+//    public Visit addVisit(LocalDate updateDate) {
+//        return addVisit(new Visit(this, updateDate));
+//    }
 
     public Visit addVisit(LocalDate visitDate) {
         for (Visit visit : visits) {
