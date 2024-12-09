@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Table(name="patients")
@@ -78,15 +79,26 @@ public class Patient implements Serializable {
     }
 
 
-    public Visit addVisit(Visit visit) {
-        if(!visits.contains(visit)){
-            visits.add(visit);
-        }
-        return visit;
-    }
+//    public Visit addVisit(Visit visit) {
+//        if(!visits.contains(visit)){
+//            System.out.println("there is no "+visit.getVisitDate() +" in ");
+//            visits.forEach(element -> System.out.println(element.getVisitDate()));
+//            visits.add(visit);
+//        }
+//        return visit;
+//    }
 
-    public Visit addVisit(LocalDate updateDate) {
-        return addVisit(new Visit(this, updateDate));
+
+
+    public Visit addVisit(LocalDate visitDate) {
+        for (Visit visit : visits) {
+            if (visit.getVisitDate().equals(visitDate)) {
+                return visit;
+            }
+        }
+        Visit visit = new Visit(this, visitDate);
+        visits.add(visit);
+        return visit;
     }
 
 

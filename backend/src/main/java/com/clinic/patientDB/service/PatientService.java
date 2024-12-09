@@ -23,9 +23,6 @@ public class PatientService {
     PatientRepository patientRepository;
     @Autowired
     VisitRepository visitRepository;
-//    @Autowired
-//    VisitService visitService;
-
 
 
     public Iterable<Patient> all() {
@@ -48,11 +45,12 @@ public class PatientService {
         Long id = extractFileInfo.getId();
         Patient patient = findById(id).orElse(new Patient(id, extractFileInfo.getName(), extractFileInfo.getIdType()));
         LocalDate visitDate = extractFileInfo.getVisitDate();
-        Visit visit = visitRepository.findByPatientAndVisitDate(patient, visitDate).orElseGet(()->{
-            Visit newVisit = new Visit(patient, visitDate);
-            patient.getVisits().add(newVisit);
-            return newVisit;
-        });
+        Visit visit = patient.addVisit(visitDate);
+//                visitRepository.findByPatientAndVisitDate(patient, visitDate).orElseGet(()->{
+//            Visit newVisit = new Visit(patient, visitDate);
+//            patient.getVisits().add(newVisit);
+//            return newVisit;
+//        });
 
         String filetype = extractFileInfo.getFileType();
         if (filetype.contains("pdf")) {

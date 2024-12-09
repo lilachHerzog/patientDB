@@ -12,6 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Entity
 @Table(name = "visits")
@@ -100,6 +101,13 @@ public class Visit implements Serializable {
         return addPatientPdfFile(new PatientPdfFile(updateDate, actionType, filename, this));
     }
 
+    public Optional<PatientDocFile> getPatientDocFile(String filename) {
+        return patientDocFile.stream().filter(doc -> doc.getFilename().equals(filename)).findFirst();
+    }
+    public Optional<PatientPdfFile> getPatientPdfFile(String filename) {
+        return patientPdfFile.stream().filter(pdf -> pdf.getFilename().equals(filename)).findFirst();
+    }
+
     public Patient getPatient() {
         return patient;
     }
@@ -109,7 +117,18 @@ public class Visit implements Serializable {
     }
 
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Visit that = (Visit) obj;
+        return visitDate.toString().equals(that.visitDate.toString());
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(visitDate);
+    }
 
 
 

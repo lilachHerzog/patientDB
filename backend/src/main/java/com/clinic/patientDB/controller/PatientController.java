@@ -1,9 +1,9 @@
 package com.clinic.patientDB.controller;
 
-import com.clinic.patientDB.model.Patient;
-import com.clinic.patientDB.model.Visit;
+import com.clinic.patientDB.model.*;
 //import com.clinic.patientDB.repository.VisitRepository;
 import com.clinic.patientDB.repository.PatientRepository;
+import com.clinic.patientDB.repository.VisitRepository;
 import com.clinic.patientDB.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.testng.AssertJUnit.assertEquals;
 
 @RestController
 @RequestMapping("/api/patients")
@@ -29,8 +28,8 @@ public class PatientController {
 
     @Autowired
     private final PatientRepository patientRepository;
-//    @Autowired
-//    private VisitRepository visitRepository;
+    @Autowired
+    private VisitRepository visitRepository;
 
     public PatientController(PatientRepository patientRepository) {
         this.patientRepository = patientRepository;
@@ -40,9 +39,19 @@ public class PatientController {
     public List<Patient> getAllPatients() {
         return patientRepository.findAll();
     }
-    @PostMapping("/getPatient/{id}")
-    public Optional<Patient> getPatient(Long id) {
-        return patientRepository.findById(id);
+
+
+    /** One patient **/
+
+    @GetMapping("/patients/{id}")
+    public Patient getPatientById(@PathVariable Long id){
+        return patientRepository.findById(id).orElse(null);
+    }
+
+    @GetMapping("/patients/{id}/{visitDate}")
+    public Optional<Visit> getPatientById(@PathVariable Long id, @PathVariable String visitDate){
+        Patient patient = patientRepository.findById(id).orElse(null);
+        return visitRepository.findByPatientAndVisitDate(patient, ExtractedFileInfo.extractVisitDate(visitDate));
     }
 
     @PostMapping("/upload")
@@ -55,6 +64,82 @@ public class PatientController {
         }
     }
 
+//    @DeleteMapping("/patients/{id}")
+//    public ResponseEntity<String> deletePatient(@PathVariable Long id){
+//        Patient patient = patientRepository.findById(id).orElse(null);
+//        if (patient == null) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+//        }
+//        patientRepository.delete(patient);
+//        return ResponseEntity.ok(patient.getName() + " deleted");
+//    }
+
+    @PutMapping("/patients/{id}")
+    public ResponseEntity<Patient> updatePatientName(@PathVariable Long id, @RequestBody String name){
+        Patient patient = patientRepository.findById(id).orElse(null);
+        if (patient == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        patient.setName(name);
+        return ResponseEntity.ok(patientRepository.save(patient));
+    }
+
+
+    /** One file **/
+
+
+
+     @DeleteMapping("/patients/{id}")
+    public ResponseEntity<Boolean> deleteFile(@PathVariable String filename ){
+         ExtractedFileInfo extractedFileInfo = new ExtractedFileInfo(filename);
+        Patient patient = patientRepository.findById(extractedFileInfo.getId()).orElse(null);
+        if (patient == null) {
+            return ResponseEntity.ok(patientRepository.findAll().contains(patient));//status(HttpStatus.NOT_FOUND).body("patient with ID " + extractedFileInfo.getId() + " not found");
+        }
+        Visit visit = visitRepository.findByPatientAndVisitDate(patient, extractedFileInfo.getVisitDate()).orElse(null);
+         if (visit == null) {
+             return ResponseEntity.ok(patient.getVisits().contains(visit));//HttpStatus.NOT_FOUND).body("No visit found for " + extractedFileInfo.getName() + " on " + extractedFileInfo.getVisitDate());
+         }
+         if (extractedFileInfo.getUpdateDateAndTime() == null){
+             PatientDocFile docFile = visit.getPatientDocFile(filename).orElse(null);
+//             if (docFile == null) {
+//                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(extractedFileInfo.getFileType() + "not found for patient " + extractedFileInfo.getName() + " on " + extractedFileInfo.getVisitDate());
+//             }
+//             visit.getPatientDocFile().remove(docFile);
+             return ResponseEntity.ok(visit.getPatientDocFile().remove(docFile));
+         } else  {
+             PatientPdfFile pdfFile = visit.getPatientPdfFile(filename).orElse(null);
+             return ResponseEntity.ok(visit.getPatientDocFile().remove(pdfFile));
+         }
+    }
+
+//    @PutMapping("/patients/{id}")
+//    public ResponseEntity<Object> GetFile( @PathVariable String filename ){
+//            ExtractedFileInfo extractedFileInfo = new ExtractedFileInfo(filename);
+//            Patient patient = patientRepository.findById(extractedFileInfo.getId()).orElse(null);
+//            if (patient == null) {
+//                return ResponseEntity.ok(patientRepository.findAll().contains(patient));//status(HttpStatus.NOT_FOUND).body("patient with ID " + extractedFileInfo.getId() + " not found");
+//            }
+//            Visit visit = visitRepository.findByPatientAndVisitDate(patient, extractedFileInfo.getVisitDate()).orElse(null);
+//            if (visit == null) {
+//                return ResponseEntity.ok(patient.getVisits().contains(visit));//HttpStatus.NOT_FOUND).body("No visit found for " + extractedFileInfo.getName() + " on " + extractedFileInfo.getVisitDate());
+//            }
+//            if (extractedFileInfo.getUpdateDateAndTime() == null){
+//                PatientDocFile docFile = visit.getPatientDocFile(filename).orElse(null);
+////             if (docFile == null) {
+////                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(extractedFileInfo.getFileType() + "not found for patient " + extractedFileInfo.getName() + " on " + extractedFileInfo.getVisitDate());
+////             }
+////             visit.getPatientDocFile().remove(docFile);
+//                return ResponseEntity.ok(visit.getPatientDocFile().remove(docFile));
+//            } else  {
+//                PatientPdfFile pdfFile = visit.getPatientPdfFile(filename).orElse(null);
+//                return ResponseEntity.ok(visit.getPatientDocFile().remove(pdfFile));
+//            }
+//    }
+
+
+
+    /** handle patients **/
 
     @PostMapping
     public ResponseEntity<List<String>> addPatients() {
