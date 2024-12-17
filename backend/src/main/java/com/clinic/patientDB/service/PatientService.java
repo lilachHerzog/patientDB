@@ -41,7 +41,8 @@ public class PatientService {
      * get visit
      * add file
      */
-    public Visit save(String fileName) {
+    public Visit save(String filePath) {
+        String fileName = filePath.split("/")[filePath.split("/").length - 1];
         ExtractedFileInfo extractFileInfo = new ExtractedFileInfo(fileName);
         Long id = extractFileInfo.getId();
         Patient patient = findById(id).orElse(new Patient(id, extractFileInfo.getName(), extractFileInfo.getIdType()));
@@ -55,9 +56,9 @@ public class PatientService {
 
         String filetype = extractFileInfo.getFileType();
         if (filetype.contains("pdf")) {
-            visit.addPatientPdfFile(extractFileInfo.getUpdateDateAndTime(), extractFileInfo.getActionType(), fileName);
+            visit.addPatientPdfFile(extractFileInfo.getUpdateDateAndTime(), extractFileInfo.getActionType(), filePath);
         } else if (filetype.contains("doc")) {
-            visit.addPatientDocFile(extractFileInfo.getActionType(), fileName);
+            visit.addPatientDocFile(extractFileInfo.getActionType(), filePath);
         } else {
             System.out.println("file type" + filetype + "is not supported, file " + fileName + "not saved");
         }
@@ -247,7 +248,7 @@ public class PatientService {
         File[] files = fileDir.listFiles((dir, name) -> name.endsWith(end));
         if (files != null) {
             for (File file : files) {
-                Visit visit = save(file.getName());
+                Visit visit = save(file.getPath());
                 String txt = "inserted [" + file.getName() + "] to patient    [" + visit.getPatient().getName() + "] id " + visit.getPatient().getId();
                 patientFileList.add(txt);
 

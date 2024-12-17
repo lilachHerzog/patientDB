@@ -12,7 +12,7 @@ import java.util.Objects;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PatientDocFile  implements Serializable {
     @Id
-    String filename;
+    String filePath;
     @ManyToOne(optional = false)
     @JoinColumn(name = "visit_id", nullable = false)
     private Visit visit;
@@ -30,17 +30,20 @@ public class PatientDocFile  implements Serializable {
         this.visitType = visitType;
     }
 
-    public String getFilename() {
-        return filename;
+    public String getFilePath() {
+        return filePath;
+    }
+    public String getFileName() {
+        return filePath.split("/")[filePath.split("/").length - 1];
     }
 
-    public void setFilename(String filename) {
-        this.filename = filename;
+    public void setFilePath(String filename) {
+        this.filePath = filename;
     }
 
-    public PatientDocFile(String visitType, String filename, Visit visit) {
+    public PatientDocFile(String visitType, String filePath, Visit visit) {
         this.visitType = visitType;
-        this.filename = filename;
+        this.filePath = filePath;
         this.visit = visit;
     }
 
@@ -50,11 +53,11 @@ public class PatientDocFile  implements Serializable {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         PatientDocFile that = (PatientDocFile) obj;
-        return Objects.equals(filename, that.filename);
+        return Objects.equals(filePath, that.filePath);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(filename);
+        return Objects.hash(filePath);
     }
 }

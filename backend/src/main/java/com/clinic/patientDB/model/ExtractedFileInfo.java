@@ -7,7 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ExtractedFileInfo {
-    public static String filenameRegex = "\\{?(\\d{6} \\d{4})?}?\\s?(\\d{6})(?:_([^_]+(?:_[^_]+)*))?_([A-Za-z])?(\\d+)([A-Za-z])?\\.(pdf|doc)";
+    public static String filenameRegex = "\\{?(\\d{6} \\d{4})?}?\\s?(\\d{6})(?:_([^_]+(?:_[^_]+)*))?_([א-תA-Za-z])?(\\d+)([א-תA-Za-z])?\\.(pdf|doc)";
     public static DateTimeFormatter updateFormatter = DateTimeFormatter.ofPattern("ddMMyy HHmm");
     public static DateTimeFormatter visitTimeFormatter = DateTimeFormatter.ofPattern("ddMMyy");
 
@@ -31,7 +31,7 @@ public class ExtractedFileInfo {
     }
 
     public ExtractedFileInfo(String filename) {
-        Pattern pattern = Pattern.compile(filenameRegex);
+        Pattern pattern = Pattern.compile(filenameRegex, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(filename);
 
         if (matcher.matches()) {
@@ -42,7 +42,7 @@ public class ExtractedFileInfo {
             this.idType = matcher.group(4);
             this.id = Long.parseLong(matcher.group(5));
             this.actionType = matcher.group(6);
-            this.fileType = matcher.group(7);
+            this.fileType = matcher.group(7).toLowerCase();
         } else {
             System.out.println(filename + " does not match the pattern.");
         }

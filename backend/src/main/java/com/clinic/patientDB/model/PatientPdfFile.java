@@ -13,12 +13,11 @@ import java.util.Objects;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PatientPdfFile  implements Serializable {
     @Id
-    String filename;
+    String filePath;
     @JsonIgnore
     @ManyToOne(optional = false)
     @JoinColumn(name = "visit_id", nullable = false)
     private Visit visit;
-
     String visitType;
     LocalDateTime updateDate;
 
@@ -31,12 +30,14 @@ public class PatientPdfFile  implements Serializable {
         this.visitType = visitType;
     }
 
-    public String getFilename() {
-        return filename;
+    public String getFilePath() {
+        return filePath;
     }
-
-    public void setFilename(String filename) {
-        this.filename = filename;
+    public String getFileName() {
+        return filePath.split("/")[filePath.split("/").length - 1];
+    }
+    public void setFilePath(String filename) {
+        this.filePath = filename;
     }
 
     public LocalDateTime getUpdateDate() {
@@ -47,20 +48,20 @@ public class PatientPdfFile  implements Serializable {
         this.updateDate = updateDate;
     }
 
-    public PatientPdfFile(LocalDateTime updateDate, String filename, Visit visit) {
+    public PatientPdfFile(LocalDateTime updateDate, String filePath, Visit visit) {
         this.updateDate = updateDate;
-        this.filename = filename;
+        this.filePath = filePath;
         this.visit = visit;
     }
 
     public PatientPdfFile() {
     }
 
-    public PatientPdfFile(LocalDateTime updateDate, String visitType, String filename, Visit visit) {
+    public PatientPdfFile(LocalDateTime updateDate, String visitType, String filePath, Visit visit) {
         this.updateDate = updateDate;
         this.visitType = visitType;
         this.visit = visit;
-        this.filename = filename;
+        this.filePath = filePath;
     }
 
 
@@ -69,11 +70,11 @@ public class PatientPdfFile  implements Serializable {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         PatientPdfFile that = (PatientPdfFile) obj;
-        return Objects.equals(filename, that.filename);
+        return Objects.equals(filePath, that.filePath);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(filename);
+        return Objects.hash(filePath);
     }
 }
