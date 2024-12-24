@@ -8,11 +8,18 @@ import com.clinic.patientDB.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import java.awt.*;
 import java.io.IOException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -38,38 +45,49 @@ public class PatientController {
     }
 
     @GetMapping
+    @PreAuthorize("@roleChecker.hasPermission(authentication.principal.role, T(com.example.Role).SECRETARY)")
     public List<Patient> getAllPatients() {
         return patientRepository.findAll();
     }
 
 
-    /** One patient **/
+    /**
+     * One patient
+     **/
 
     @GetMapping("/{id}")
-    public Patient getPatientById(@PathVariable Long id){
+    @PreAuthorize("@roleChecker.hasPermission(authentication.principal.role, T(com.example.Role).SECRETARY)")
+    public Patient getPatientById(@PathVariable Long id) {
         return patientRepository.findById(id).orElse(null);
     }
 
     @GetMapping("/{id}/visitDatess")
-    public List<LocalDate> getPatientsVisitDatesById(@PathVariable Long id){
+    @PreAuthorize("@roleChecker.hasPermission(authentication.principal.role, T(com.example.Role).SECRETARY)")
+    public List<LocalDate> getPatientsVisitDatesById(@PathVariable Long id) {
         Patient patient = patientRepository.findById(id).orElse(null);
         if (patient == null) return null;
         return patient.getVisitsDates();
     }
+
     @GetMapping("/{id}/visits")
-    public List<Visit> getPatientsVisitsById(@PathVariable Long id){
+    @PreAuthorize("@roleChecker.hasPermission(authentication.principal.role, T(com.example.Role).SECRETARY)")
+//    @PreAuthorize("hasAnyRole('DOCTOR', 'NURSE')") // רופאים ואחיות יכולים לגשת
+    public List<Visit> getPatientsVisitsById(@PathVariable Long id) {
         Patient patient = patientRepository.findById(id).orElse(null);
         if (patient == null) return null;
         return patient.getVisits();
     }
 
     @GetMapping("/{id}/{visitDate}")
-    public Optional<Visit> getVisitsByPatientId(@PathVariable Long id, @PathVariable String visitDate){
+    @PreAuthorize("@roleChecker.hasPermission(authentication.principal.role, T(com.example.Role).SECRETARY)")
+    public Optional<Visit> getVisitsByPatientId(@PathVariable Long id, @PathVariable String visitDate) {
         Patient patient = patientRepository.findById(id).orElse(null);
         return visitRepository.findByPatientAndVisitDate(patient, ExtractedFileInfo.extractVisitDate(visitDate));
     }
 
+//    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/upload")
+    @PreAuthorize("@roleChecker.hasPermission(authentication.principal.role, T(com.example.Role).SECRETARY)")
     public ResponseEntity<Visit> insertFile(@RequestParam("file") String fileName) {
         try {
             Visit savedPatientFile = patientService.save(fileName);
@@ -79,33 +97,32 @@ public class PatientController {
         }
     }
 
+//    @PreAuthorize("hasAnyRole('NURSE', 'SECRETARY', 'DOCTOR', 'ADMIN')")
     @GetMapping("/{id}/{visitDate}/pdfFiles")
-    public List<PatientPdfFile> getPdfFilesByVisitId(@PathVariable Long id, @PathVariable String visitDate){
+    @PreAuthorize("@roleChecker.hasPermission(authentication.principal.role, T(com.example.Role).SECRETARY)")
+    public List<PatientPdfFile> getPdfFilesByVisitId(@PathVariable Long id, @PathVariable String visitDate) {
         Patient patient = patientRepository.findById(id).orElse(null);
-        Visit visit = visitRepository.findByPatientAndVisitDate(patient , ExtractedFileInfo.extractVisitDate(visitDate)).orElse(null);
+        Visit visit = visitRepository.findByPatientAndVisitDate(patient, ExtractedFileInfo.extractVisitDate(visitDate)).orElse(null);
         return visit.getPatientPdfFile();
     }
 
+//    @PreAuthorize("hasAnyRole('DOCTOR', 'ADMIN')")
     @GetMapping("/{id}/{visitDate}/docFiles")
-    public List<PatientDocFile> getDocFilesByVisitId(@PathVariable Long id, @PathVariable String visitDate){
+    @PreAuthorize("hasRole('DOCTOR')")
+    public List<PatientDocFile> getDocFilesByVisitId(@PathVariable Long id, @PathVariable String visitDate) {
         Patient patient = patientRepository.findById(id).orElse(null);
         Visit visit = visitRepository.findByPatientAndVisitDate(patient, ExtractedFileInfo.extractVisitDate(visitDate)).orElse(null);
         if (visit == null) return null;
         return visit.getPatientDocFile();
     }
 
-//    @DeleteMapping("/patients/{id}")
-//    public ResponseEntity<String> deletePatient(@PathVariable Long id){
-//        Patient patient = patientRepository.findById(id).orElse(null);
-//        if (patient == null) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-//        }
-//        patientRepository.delete(patient);
-//        return ResponseEntity.ok(patient.getName() + " deleted");
-//    }
 
+    @RequiredRole(Role.ADMIN)
     @PutMapping("/{id}")
-    public ResponseEntity<Patient> updatePatientName(@PathVariable Long id, @RequestBody String name){
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<Patient> updatePatientName(@PathVariable Long id, @RequestBody String name) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("authorities = " + authentication.getAuthorities());
         Patient patient = patientRepository.findById(id).orElse(null);
         if (patient == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -115,10 +132,12 @@ public class PatientController {
     }
 
 
-
-    /** handle patients **/
+    /**
+     * handle patients
+     **/
 
     @PostMapping
+    @PreAuthorize("@roleChecker.hasPermission(authentication.principal.role, T(com.example.Role).SECRETARY)")
     public ResponseEntity<List<String>> addPatients() {
         List<String> patientNames = new ArrayList<>();
         for (Patient patient : patientRepository.findAll()) {
@@ -129,25 +148,16 @@ public class PatientController {
     }
 
     @PostMapping(value = "/generateDataBase")
+    @PreAuthorize("@roleChecker.hasPermission(authentication.principal.role, T(com.example.Role).SECRETARY)")
     public ResponseEntity<List<String>> generateDataBase() {
-        return ResponseEntity.ok(patientService.generateDataBase());//Stream.concat(db.getPdf().stream(), db.getWord().stream()));
-
-//        System.out.println( ResponseEntity.ok(patientService.generateDataBase()));
-//        return ResponseEntity.ok("File opened successfully!");
+        return ResponseEntity.ok(patientService.generateDataBase());
 
     }
 
-//    @RequestMapping(value = "/getLatestWordFile/{patientId}", method = RequestMethod.GET)
-//    public ResponseEntity<String> getLatestWordFile(@PathVariable String patientId) {
-//        return ResponseEntity.ok(fileService.getLatestWordFile(patientId));
-//    }
-//    @RequestMapping(value = "/getLatestPdfFile/{patientId}", method = RequestMethod.GET)
-//    public ResponseEntity<String> getLatestPdfFile(@PathVariable String patientId) {
-//        return ResponseEntity.ok(fileService.getLatestPdfFile(patientId));
-//    }
 
     //    @GetMapping("/open/{fileName}")
-    @RequestMapping(value = "/open/{fileName}", method = RequestMethod.GET)
+    @GetMapping("/open/{fileName}")
+    @PreAuthorize("@roleChecker.hasPermission(authentication.principal.role, T(com.example.Role).SECRETARY)")
     public ResponseEntity<String> openFile(@PathVariable String fileName) {
         try {
             Path filePath = Paths.get("Users/lilach/Documents/עניינים משפחתיים/", fileName);
@@ -158,13 +168,25 @@ public class PatientController {
         }
     }
 
-    @RequestMapping(value = "/numOfVisits/{id}", method = RequestMethod.GET)
+
+
+    @GetMapping("/numOfVisits/{id}")
+    @PreAuthorize("@roleChecker.hasPermission(authentication.principal.role, T(com.example.Role).SECRETARY)")
     public ResponseEntity<Integer> numOfVisits(@PathVariable Long id) {
         return ResponseEntity.ok(patientRepository.getById(id).getNumberOfVisits());
 
     }
 
 
+    @Target(ElementType.METHOD)
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface RequiredRole {
+        Role value(); // רמת ההרשאה הנדרשת
+    }
+
+
+
+}
 //    @PostConstruct
 //    public void init() {
 //        Long id = 46854L;
@@ -197,5 +219,5 @@ public class PatientController {
 //    public String openWordFile(String patientID) {
 //        return fileService.getLatestFile(patientID);
 //    }
-}
+
 

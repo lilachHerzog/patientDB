@@ -223,7 +223,7 @@ public class PatientService {
         files.addAll(insertFilesFromFolder(basePath + "/PDF/", ".pdf"));
 
         for (int i = startYear; i <= currentYear; i++) {
-            String yearPath =  "%s/%s/".formatted(basePath, i);
+            String yearPath =  basePath + "/" + i + "/";
             List<String> temp = insertFilesFromFolder(yearPath, ".doc");
             if (temp != null) {
                 files.addAll(temp);
