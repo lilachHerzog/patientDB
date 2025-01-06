@@ -1,5 +1,9 @@
 package com.clinic.patientDB.model;
 
+import com.clinic.patientDB.auth.CustomUserDetailsService;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
 import javax.persistence.*;
 
 @Entity
@@ -48,10 +52,12 @@ public class DBUser {
         this.role = role;
     }
 
-    public DBUser(String username, String password) {
+    public DBUser(String username, String password, String role) {
         this.username = username;
         this.password = password;
+        this.role = role;
     }
+
 
     public DBUser() {
     }

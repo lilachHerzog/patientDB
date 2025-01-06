@@ -16,25 +16,31 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 @RequestMapping("/auth")
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
+
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     private JwtUtil jwtUtil;
+    @Autowired
+    private UserRepository userRepository;
+
     public AuthController(AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
@@ -64,37 +70,54 @@ public class AuthController {
     }
 
     @ResponseBody
-    @GetMapping("/deleteUser")
-    public ResponseEntity<?> deleteUser(@RequestParam String username) {
+    @DeleteMapping("/deleteUser")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> deleteUser(@RequestParam String usernameToDelete) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String loggedInUsername = authentication.getName();
+
+        // בדיקה אם המשתמש מנסה למחוק את עצמו
+        if (loggedInUsername.equals(usernameToDelete)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("You cannot delete your own account.");
+        }
         try {
-            return ResponseEntity.ok(userDetailsService.deleteUser(username));
+            return ResponseEntity.ok(userDetailsService.deleteUser(usernameToDelete));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
-    @ResponseBody
-    @GetMapping("/deleteUserById")
-    public ResponseEntity<?> deleteUserById(@RequestParam Long userId) {
-        try {
-            userDetailsService.deleteUser(userId);
-            return ResponseEntity.ok("deleted");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
+//    @ResponseBody
+//    @DeleteMapping("/deleteUserById")
+//    @PreAuthorize("hasRole('ADMIN')")
+//    public ResponseEntity<?> deleteUserById(@RequestParam Long userId) {
+//
+//        try {
+//            userDetailsService.deleteUser(userId);
+//            return ResponseEntity.ok("deleted");
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+//        }
+//    }
 
     @PostMapping("/addUser")
-    @PreAuthorize("@roleChecker.hasPermission(authentication.principal.role, T(com.example.Role).DOCTOR)")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> addUser(@RequestParam String username, @RequestParam String password, @RequestParam String role) {
-                UserDetails user = org.springframework.security.core.userdetails.User.withDefaultPasswordEncoder()
-                .username(username)
-                .password(password)
-                .roles(role)
-                .build();
-        return ResponseEntity.ok(new InMemoryUserDetailsManager(user));
+        try {
+            DBUser user = userDetailsService.save(username, password, role);
+            String token = jwtUtil.createToken(user);
+
+            return ResponseEntity.ok(Map.of(
+                    "message", "User created successfully!",
+                    "token", token
+            ));
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
     }
     @ResponseBody
     @GetMapping("/getAllUsers")
+    @PreAuthorize("hasRole('ROLE_SECRETARY')")
     public ResponseEntity<?> getAllUsers() {
         return ResponseEntity.ok(userDetailsService.findAll());
 

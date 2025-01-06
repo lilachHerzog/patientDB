@@ -1,5 +1,7 @@
 package com.clinic.patientDB.model;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 public enum Role {
@@ -18,12 +20,15 @@ public enum Role {
         return level;
     }
 
+    public static Role fromString(String roleName) {
+        return Role.valueOf(roleName.replace("ROLE_", "").toUpperCase());
+    }
     @Component
     public class RoleChecker {
-        public boolean hasPermission(Role userRole, Role requiredRole) {
-            return userRole.getLevel() >= requiredRole.getLevel();
+        public boolean hasPermission(String userRole, String requiredRole) {
+            return Role.valueOf(userRole).getLevel() >= Role.valueOf(requiredRole).getLevel();
         }
     }
-
-
 }
+
+

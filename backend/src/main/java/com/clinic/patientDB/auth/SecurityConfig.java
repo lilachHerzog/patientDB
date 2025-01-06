@@ -1,6 +1,7 @@
 package com.clinic.patientDB.auth;
 
 import com.clinic.patientDB.model.Role;
+import com.sun.xml.bind.v2.TODO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,10 +25,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.stream.Collectors;
+//TODO login without token (in the background)
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
@@ -69,17 +67,14 @@ public class SecurityConfig extends GlobalMethodSecurityConfiguration {
                 ).permitAll()
                 .anyRequest().authenticated()
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and().addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
+                .and().addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class).exceptionHandling()
+                .accessDeniedHandler(new CustomAccessDeniedHandler());
 
         return http.build();
     }
 
 
-    @SuppressWarnings("deprecation")
-    @Bean
-    public NoOpPasswordEncoder passwordEncoder() {
-        return (NoOpPasswordEncoder) NoOpPasswordEncoder.getInstance();
-    }
+
 
     @Bean
     static MethodSecurityExpressionHandler methodSecurityExpressionHandler() {
@@ -87,5 +82,7 @@ public class SecurityConfig extends GlobalMethodSecurityConfiguration {
         expressionHandler.setRoleHierarchy(JwtUtil.roleHierarchy);
         return expressionHandler;
     }
+
+
 
 }

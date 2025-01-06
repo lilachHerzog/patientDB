@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+//todo authorize each method
 
 @RestController
 @RequestMapping("/api/patients")
@@ -45,7 +46,7 @@ public class PatientController {
     }
 
     @GetMapping
-    @PreAuthorize("@roleChecker.hasPermission(authentication.principal.role, T(com.example.Role).SECRETARY)")
+    @PreAuthorize("hasRole('SECRETARY')")
     public List<Patient> getAllPatients() {
         return patientRepository.findAll();
     }
@@ -56,7 +57,7 @@ public class PatientController {
      **/
 
     @GetMapping("/{id}")
-    @PreAuthorize("@roleChecker.hasPermission(authentication.principal.role, T(com.example.Role).SECRETARY)")
+    @PreAuthorize("hasRole('SECRETARY')")
     public Patient getPatientById(@PathVariable Long id) {
         return patientRepository.findById(id).orElse(null);
     }
@@ -87,7 +88,7 @@ public class PatientController {
 
 //    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/upload")
-    @PreAuthorize("@roleChecker.hasPermission(authentication.principal.role, T(com.example.Role).SECRETARY)")
+    @PreAuthorize("@roleChecker.hasPermission(authentication.principal.role, T(com.example.Role).DOCTOR)")
     public ResponseEntity<Visit> insertFile(@RequestParam("file") String fileName) {
         try {
             Visit savedPatientFile = patientService.save(fileName);
@@ -99,7 +100,7 @@ public class PatientController {
 
 //    @PreAuthorize("hasAnyRole('NURSE', 'SECRETARY', 'DOCTOR', 'ADMIN')")
     @GetMapping("/{id}/{visitDate}/pdfFiles")
-    @PreAuthorize("@roleChecker.hasPermission(authentication.principal.role, T(com.example.Role).SECRETARY)")
+    @PreAuthorize("hasRole('SECRETARY')")
     public List<PatientPdfFile> getPdfFilesByVisitId(@PathVariable Long id, @PathVariable String visitDate) {
         Patient patient = patientRepository.findById(id).orElse(null);
         Visit visit = visitRepository.findByPatientAndVisitDate(patient, ExtractedFileInfo.extractVisitDate(visitDate)).orElse(null);
@@ -137,7 +138,7 @@ public class PatientController {
      **/
 
     @PostMapping
-    @PreAuthorize("@roleChecker.hasPermission(authentication.principal.role, T(com.example.Role).SECRETARY)")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<String>> addPatients() {
         List<String> patientNames = new ArrayList<>();
         for (Patient patient : patientRepository.findAll()) {
@@ -148,7 +149,7 @@ public class PatientController {
     }
 
     @PostMapping(value = "/generateDataBase")
-    @PreAuthorize("@roleChecker.hasPermission(authentication.principal.role, T(com.example.Role).SECRETARY)")
+    @PreAuthorize("@roleChecker.hasPermission(authentication.principal.role, T(com.example.Role).ADMIN)")
     public ResponseEntity<List<String>> generateDataBase() {
         return ResponseEntity.ok(patientService.generateDataBase());
 
