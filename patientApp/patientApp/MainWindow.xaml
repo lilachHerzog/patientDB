@@ -27,14 +27,14 @@
                     <DataGridTemplateColumn Header="PDF">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Content="הורד PDF" CommandParameter="{Binding PdfFilePath}" Click="DownloadPdf_Click" />
+                                <Button Content="פתח PDF" CommandParameter="{Binding PdfFilePath}" Click="DownloadPdf_Click" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="DOCX">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Content="הורד DOCX" CommandParameter="{Binding DocFilePath}" Click="DownloadDoc_Click" />
+                                <Button Content="פתח DOCX" CommandParameter="{Binding DocFilePath}" Click="DownloadDoc_Click" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
