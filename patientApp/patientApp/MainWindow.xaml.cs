@@ -19,6 +19,17 @@ namespace patientApp
             InitializeComponent();
             LoadPatients();
             PatientsListBox.ItemsSource = patients;
+            VisitsDataGrid.MouseDoubleClick += VisitsDataGrid_MouseDoubleClick;
+        }
+
+        private void VisitsDataGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (VisitsDataGrid.SelectedItem is Visit selectedVisit)
+            {
+                var detailsWindow = new VisitDetailsWindow(selectedVisit);
+                detailsWindow.Owner = this;
+                detailsWindow.ShowDialog();
+            }
         }
 
         private void LoadPatients()
@@ -83,7 +94,7 @@ namespace patientApp
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Could not open PDF file: {ex.Message}");
+                    MessageBox.Show($"לא ניתן לפתוח קובץ PDF: {ex.Message}");
                 }
             }
         }
@@ -98,7 +109,7 @@ namespace patientApp
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Could not open DOC file: {ex.Message}");
+                    MessageBox.Show($"לא ניתן לפתוח קובץ DOCX: {ex.Message}");
                 }
             }
         }
