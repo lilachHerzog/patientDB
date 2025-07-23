@@ -18,3 +18,6 @@ obj/
 
 # Sensitive files
 appsettings.json
+
+# Maven files
+*.jar

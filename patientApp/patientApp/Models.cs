@@ -8,15 +8,16 @@ namespace patientApp
 
     public class Patient
     {
-        public string Name { get; set; }
+        public string Id { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
         public List<Visit> Visits { get; set; } = new List<Visit>();
     }
 
     public class Visit
     {
         public DateTime VisitDate { get; set; }
-        public string Description { get; set; }
-        public string PdfFilePath { get; set; }
-        public string DocFilePath { get; set; }
+        public string Description { get; set; } = string.Empty;
+        public string? PdfFilePath { get; set; }
+        public string? DocFilePath { get; set; }
     }
 }
