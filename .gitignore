@@ -20,5 +20,5 @@ obj/
 appsettings.json
 
 # Build output directories
-*/backend/target/
+backend/target/
 
