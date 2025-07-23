@@ -19,5 +19,6 @@ obj/
 # Sensitive files
 appsettings.json
 
-# Jar files
-*.jar
+# Build output directories
+backend/target/
+
