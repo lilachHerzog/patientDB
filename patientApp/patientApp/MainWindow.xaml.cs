@@ -87,6 +87,32 @@ namespace patientApp
                             DocFilePath = "C:/Files/JaneSmith_Consultation.docx"
                         }
                     }
+                },
+                new Patient
+                {
+                    Name = "אדם מחסובק",
+                    Id = "321123123",
+                    Visits = new List<Visit>
+                    {
+                        new Visit {
+                            VisitDate = DateTime.Now.AddDays(-40),
+                            Description = "בדיקה רפואית",
+                            PdfFilePath = "C:/Files/JaneSmith_Consultation.pdf",
+                            DocFilePath = "C:/Files/JaneSmith_Consultation.docx"
+                        },
+                        new Visit {
+                            VisitDate = DateTime.Now.AddDays(-20),
+                            Description = "טיפול רפואי",
+                            PdfFilePath = "C:/Files/JaneSmith_Consultation.pdf",
+                            DocFilePath = "C:/Files/JaneSmith_Consultation.docx"
+                        },
+                        new Visit {
+                            VisitDate = DateTime.Now.AddDays(-11),
+                            Description = "הפניה רפואית",
+                            PdfFilePath = "C:/Files/JaneSmith_Consultation.pdf",
+                            DocFilePath = "C:/Files/JaneSmith_Consultation.docx"
+                        }
+                    }
                 }
             };
             
