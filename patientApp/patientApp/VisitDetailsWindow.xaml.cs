@@ -7,10 +7,19 @@ namespace patientApp
     public partial class VisitDetailsWindow : Window
     {
         private readonly Visit _visit;
-        public VisitDetailsWindow(Visit visit)
+        private readonly Patient _patient;
+        
+        public VisitDetailsWindow(Patient patient, Visit visit)
         {
             InitializeComponent();
             _visit = visit;
+            _patient = patient;
+            
+            // Set patient information
+            PatientNameText.Text = $"שם המטופל: {patient.Name}";
+            PatientIdText.Text = $"תעודת זהות: {patient.Id}";
+            
+            // Set visit information
             VisitDateText.Text = $"תאריך ביקור: {visit.VisitDate:dd/MM/yyyy}";
             DescriptionText.Text = $"פרטים: {visit.Description}";
         }

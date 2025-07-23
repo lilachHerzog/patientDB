@@ -38,9 +38,10 @@ namespace patientApp
 
         private void VisitsDataGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            if (VisitsDataGrid.SelectedItem is Visit selectedVisit)
+            var selectedPatient = PatientsListBox.SelectedItem as Patient;
+            if (selectedPatient != null && VisitsDataGrid.SelectedItem is Visit selectedVisit)
             {
-                var detailsWindow = new VisitDetailsWindow(selectedVisit);
+                var detailsWindow = new VisitDetailsWindow(selectedPatient, selectedVisit);
                 detailsWindow.Owner = this;
                 detailsWindow.ShowDialog();
             }
