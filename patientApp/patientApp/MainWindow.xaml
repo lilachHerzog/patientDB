@@ -9,8 +9,8 @@
         Title="אפליקציית מטופלים" Height="450" Width="800" FlowDirection="RightToLeft">
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="260" />
+            <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -51,10 +51,18 @@
                         Click="ClearDateButton_Click"
                         Margin="0,0,0,5"
                         Height="25"/>
-                <ListBox x:Name="PatientsListBox" 
-                         DisplayMemberPath="Name" 
+                <ListBox x:Name="PatientsListBox"
                          SelectionChanged="PatientsListBox_SelectionChanged" 
-                         Margin="0,5,0,0"/>
+                         Margin="0,5,0,0">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Margin="2">
+                                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" MinWidth="150"/>
+                                <TextBlock Text="{Binding Id}" Foreground="Gray" Margin="10,0,0,0"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </StackPanel>
         </GroupBox>
 

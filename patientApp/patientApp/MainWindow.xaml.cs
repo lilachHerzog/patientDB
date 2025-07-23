@@ -117,9 +117,7 @@ namespace patientApp
             };
             
             // Initialize patients list with all patients (no duplicates)
-            allPatients.Clear();
             patients.Clear();
-            allPatients.AddRange(samplePatients);
             patients.AddRange(samplePatients);
         }
 
