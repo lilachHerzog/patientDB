@@ -110,53 +110,65 @@ namespace patientApp
             }
         }
 
-        private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        private DateTime? lastSearchDate = null;
+        private string lastSearchText = string.Empty;
+
+        private void UpdatePatientList()
         {
-            if (SearchTextBox == null || PatientsListBox == null) return;
-            
+            if (PatientsListBox == null) return;
+
             string searchText = SearchTextBox.Text.Trim();
-            
-            // If the search box contains the default text or is empty, show all patients
-            if (searchText == "חפש לפי שם או תעודת זהות" || string.IsNullOrWhiteSpace(searchText))
+            if (searchText == "חפש לפי שם או תעודת זהות")
             {
-                // Clear and repopulate to avoid duplicates
-                var currentSelection = PatientsListBox.SelectedItem;
-                patients.Clear();
-                patients.AddRange(allPatients
-                    .GroupBy(p => p.Id)
-                    .Select(g => g.First()));
-                
-                // Restore selection if still valid
-                if (currentSelection is Patient selectedPatient && patients.Contains(selectedPatient))
-                {
-                    PatientsListBox.SelectedItem = selectedPatient;
-                }
+                searchText = string.Empty;
             }
-            else
+
+            var query = allPatients.AsEnumerable();
+
+            // Apply text filter if search text is provided
+            if (!string.IsNullOrWhiteSpace(searchText))
             {
-                // Filter patients by name or ID (case-insensitive)
                 searchText = searchText.ToLower();
-                var filteredPatients = allPatients
-                    .Where(p => (p.Name?.ToLower().Contains(searchText) ?? false) || 
-                              (p.Id?.Contains(searchText, StringComparison.OrdinalIgnoreCase) ?? false))
-                    .GroupBy(p => p.Id)  // Group by ID to remove duplicates
-                    .Select(g => g.First())
-                    .ToList();
-                
-                var currentSelection = PatientsListBox.SelectedItem;
-                patients.Clear();
-                patients.AddRange(filteredPatients);
-                
-                // Restore selection if still valid
-                if (currentSelection is Patient selectedPatient && patients.Contains(selectedPatient))
-                {
-                    PatientsListBox.SelectedItem = selectedPatient;
-                }
+                query = query.Where(p => (p.Name?.ToLower().Contains(searchText) ?? false) ||
+                                       (p.Id?.Contains(searchText, StringComparison.OrdinalIgnoreCase) ?? false));
             }
-            
-            // Update the ListBox with filtered results
+
+            // Apply date filter if a date is selected
+            if (lastSearchDate.HasValue)
+            {
+                var targetDate = lastSearchDate.Value.Date;
+                query = query.Where(p => p.Visits?.Any(v => v.VisitDate.Date == targetDate) ?? false);
+            }
+
+            // Get distinct patients by ID
+            var filteredPatients = query
+                .GroupBy(p => p.Id)
+                .Select(g => g.First())
+                .ToList();
+
+            // Update the patients collection
+            patients.Clear();
+            foreach (var patient in filteredPatients)
+            {
+                patients.Add(patient);
+            }
+
+            // Update the UI
             PatientsListBox.ItemsSource = null; // Force refresh
             PatientsListBox.ItemsSource = patients;
+            
+            // Select first item if available
+            if (PatientsListBox.Items.Count > 0)
+            {
+                PatientsListBox.SelectedIndex = 0;
+            }
+        }
+
+        private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (SearchTextBox == null) return;
+            lastSearchText = SearchTextBox.Text.Trim();
+            UpdatePatientList();
         }
 
         private void SearchTextBox_GotFocus(object sender, RoutedEventArgs e)
@@ -167,6 +179,19 @@ namespace patientApp
                 SearchTextBox.Text = "";
                 SearchTextBox.Foreground = System.Windows.Media.Brushes.Black;
             }
+        }
+
+        private void VisitDatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            lastSearchDate = VisitDatePicker.SelectedDate?.Date;
+            UpdatePatientList();
+        }
+
+        private void ClearDateButton_Click(object sender, RoutedEventArgs e)
+        {
+            VisitDatePicker.SelectedDate = null;
+            lastSearchDate = null;
+            UpdatePatientList();
         }
 
         private void DownloadPdf_Click(object sender, RoutedEventArgs e)

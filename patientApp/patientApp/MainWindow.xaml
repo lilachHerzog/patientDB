@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:patientApp"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="אפליקציית מטופלים" Height="450" Width="800" FlowDirection="RightToLeft">
     <Grid Margin="10">
@@ -18,7 +19,7 @@
         <GroupBox Header="מטופלים" Grid.Column="0" Margin="0,0,10,0">
             <StackPanel>
                 <TextBox x:Name="SearchTextBox" 
-                         Margin="0,0,0,10" 
+                         Margin="0,0,0,5" 
                          TextChanged="SearchTextBox_TextChanged"
                          TextWrapping="Wrap"
                          VerticalAlignment="Top"
@@ -28,16 +29,43 @@
                          Text="חפש לפי שם או תעודת זהות"
                          Foreground="Gray"
                          GotFocus="SearchTextBox_GotFocus"/>
+                <DatePicker x:Name="VisitDatePicker" 
+                           SelectedDateChanged="VisitDatePicker_SelectedDateChanged"
+                           DisplayDateStart="2000-01-01"
+                           DisplayDateEnd="{x:Static sys:DateTime.Now}"
+                           VerticalContentAlignment="Center"
+                           Height="30"
+                           IsTodayHighlighted="True"
+                           SelectedDateFormat="Short"
+                           FirstDayOfWeek="Sunday"
+                           Margin="0,0,0,5">
+                    <DatePicker.Resources>
+                        <Style TargetType="DatePickerTextBox">
+                            <Setter Property="Text" Value="חפש לפי תאריך" />
+                            <Setter Property="Foreground" Value="Gray" />
+                        </Style>
+                    </DatePicker.Resources>
+                </DatePicker>
+                <Button x:Name="ClearDateButton" 
+                        Content="נקה תאריך" 
+                        Click="ClearDateButton_Click"
+                        Margin="0,0,0,5"
+                        Height="25"/>
                 <ListBox x:Name="PatientsListBox" 
                          DisplayMemberPath="Name" 
-                         SelectionChanged="PatientsListBox_SelectionChanged" />
+                         SelectionChanged="PatientsListBox_SelectionChanged" 
+                         Margin="0,5,0,0"/>
             </StackPanel>
         </GroupBox>
 
         <GroupBox Header="ביקורים" Grid.Column="1">
             <DataGrid x:Name="VisitsDataGrid" AutoGenerateColumns="False" IsReadOnly="True">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="תאריך ביקור" Binding="{Binding VisitDate}" />
+                    <DataGridTextColumn Header="תאריך ביקור">
+                        <DataGridTextColumn.Binding>
+                            <Binding Path="VisitDate" StringFormat="dd-MM-yyyy HH:mm" />
+                        </DataGridTextColumn.Binding>
+                    </DataGridTextColumn>
                     <DataGridTextColumn Header="פרטים" Binding="{Binding Description}" />
                     <DataGridTemplateColumn Header="PDF">
                         <DataGridTemplateColumn.CellTemplate>
