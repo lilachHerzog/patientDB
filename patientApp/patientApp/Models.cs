@@ -37,7 +37,7 @@ namespace patientApp
     {
         public string DisplayName { get; set; } = string.Empty;
         public string FilePath { get; set; } = string.Empty;
-        public string FileType => Path.GetExtension(FilePath)?.ToLower() == ".pdf" ? "PDF" : "DOCX";
+        public string FileType => Path.GetExtension(FilePath)?.ToLower() == ".pdf" ? "PDF" : "DOC";
 
         public FileAttachment(string filePath, string? displayName = null)
         {
@@ -55,7 +55,7 @@ namespace patientApp
 
         // Helper properties for easy access to file paths
         public IEnumerable<string> PdfFilePaths => Attachments.Where(f => f.FileType == "PDF").Select(f => f.FilePath);
-        public IEnumerable<string> DocFilePaths => Attachments.Where(f => f.FileType == "DOCX").Select(f => f.FilePath);
+        public IEnumerable<string> DocFilePaths => Attachments.Where(f => f.FileType == "DOC").Select(f => f.FilePath);
 
         // For backward compatibility
         [Obsolete("Use AddAttachment or Attachments property instead")]
@@ -65,7 +65,7 @@ namespace patientApp
         public string? DocFilePath { get => DocFiles.FirstOrDefault()?.FilePath; set { if (value != null) AddAttachment(value); } }
 
         public IEnumerable<FileAttachment> PdfFiles => Attachments.Where(f => f.FileType == "PDF");
-        public IEnumerable<FileAttachment> DocFiles => Attachments.Where(f => f.FileType == "DOCX");
+        public IEnumerable<FileAttachment> DocFiles => Attachments.Where(f => f.FileType == "DOC");
 
         public void AddAttachment(string filePath, string? displayName = null)
         {

@@ -74,22 +74,22 @@ namespace patientApp
                         }.WithFiles(
                             ("C:/Files/JohnDoe_AnnualCheckup.pdf", "דו'ח שנתי"),
                             ("C:/Files/JohnDoe_LabResults.pdf", "תוצאות מעבדה"),
-                            ("C:/Files/JohnDoe_AnnualCheckup.docx", "סיכום ביקור"),
-                            ("C:/Files/JohnDoe_MedicalHistory.docx", "היסטוריה רפואית")
+                            ("C:/Files/JohnDoe_AnnualCheckup.doc", "סיכום ביקור"),
+                            ("C:/Files/JohnDoe_MedicalHistory.doc", "היסטוריה רפואית")
                         ),
                         new Visit {
                             VisitDate = DateTime.Now.AddDays(-5),
                             Description = "ייעוץ ראשוני"
                         }.WithFiles(
                             ("C:/Files/JohnDoe_Consultation.pdf", "סיכום ייעוץ"),
-                            ("C:/Files/JohnDoe_Consultation.docx", "היסטוריה רפואית")
+                            ("C:/Files/JohnDoe_Consultation.doc", "היסטוריה רפואית")
                         ),
                         new Visit {
                             VisitDate = DateTime.Now.AddDays(-2),
                             Description = "מעקב"
                         }.WithFiles(
                             ("C:/Files/JohnDoe_FollowUp.pdf", "סיכום מעקב"),
-                            ("C:/Files/JohnDoe_FollowUp.docx", "סיכום מעקב")
+                            ("C:/Files/JohnDoe_FollowUp.doc", "סיכום מעקב")
                         )
                     }
                 },
@@ -104,21 +104,21 @@ namespace patientApp
                             Description = "ייעוץ רפואי"
                         }.WithFiles(
                             ("C:/Files/JaneSmith_Consultation.pdf", "סיכום ייעוץ"),
-                            ("C:/Files/JaneSmith_Consultation.docx", "הערות נוספות")
+                            ("C:/Files/JaneSmith_Consultation.doc", "הערות נוספות")
                         ),
                         new Visit {
                             VisitDate = DateTime.Now.AddDays(-15),
                             Description = "בדיקת דם"
                         }.WithFiles(
                             ("C:/Files/JaneSmith_BloodTest.pdf", "תוצאות בדיקות דם"),
-                            ("C:/Files/JaneSmith_BloodTest.docx", "הערות רופא")
+                            ("C:/Files/JaneSmith_BloodTest.doc", "הערות רופא")
                         ),
                         new Visit {
                             VisitDate = DateTime.Now.AddDays(-11),
                             Description = "הפניה רפואית",
                         }.WithFiles(
                             ("C:/Files/JaneSmith_Consultation.pdf", "סיכום הפנייה רפואית"),
-                            ("C:/Files/JaneSmith_Consultation.docx", "הערות רופא")
+                            ("C:/Files/JaneSmith_Consultation.doc", "הערות רופא")
                         )
                     }
                 },
@@ -133,21 +133,21 @@ namespace patientApp
                             Description = "בדיקה רפואית",
                         }.WithFiles(
                             ("C:/Files/JaneSmith_Consultation.pdf", "סיכום הפנייה רפואית"),
-                            ("C:/Files/JaneSmith_Consultation.docx", "הערות רופא")
+                            ("C:/Files/JaneSmith_Consultation.doc", "הערות רופא")
                         ),
                         new Visit {
                             VisitDate = DateTime.Now.AddDays(-20),
                             Description = "טיפול רפואי",
                         }.WithFiles(
                             ("C:/Files/JaneSmith_Consultation.pdf", "סיכום הפנייה רפואית"),
-                            ("C:/Files/JaneSmith_Consultation.docx", "הערות רופא")
+                            ("C:/Files/JaneSmith_Consultation.doc", "הערות רופא")
                         ),
                         new Visit {
                             VisitDate = DateTime.Now.AddDays(-11),
                             Description = "הפניה רפואית",
                         }.WithFiles(
                             ("C:/Files/JaneSmith_Consultation.pdf", "סיכום הפנייה רפואית"),
-                            ("C:/Files/JaneSmith_Consultation.docx", "הערות רופא")
+                            ("C:/Files/JaneSmith_Consultation.doc", "הערות רופא")
                         )
                     }
                 }
@@ -339,7 +339,7 @@ namespace patientApp
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"לא ניתן לפתוח קובץ DOCX: {ex.Message}");
+                    MessageBox.Show($"לא ניתן לפתוח קובץ DOC: {ex.Message}");
                 }
             }
         }
