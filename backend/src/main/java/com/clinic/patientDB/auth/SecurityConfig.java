@@ -28,8 +28,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 //TODO login without token (in the background)
 
 @Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
-@EnableWebSecurity
+ @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
+//@EnableGlobalMethodSecurity(prePostEnabled = false, securedEnabled = false)
+ @EnableWebSecurity
 public class SecurityConfig extends GlobalMethodSecurityConfiguration {
 
     private final CustomUserDetailsService userDetailsService;
@@ -63,7 +64,8 @@ public class SecurityConfig extends GlobalMethodSecurityConfiguration {
                         "/v2/api-docs",
                         "/v3/api-docs/**",
                         "/swagger-resources/**",
-                        "/webjars/**"
+                        "/webjars/**",
+                        "/api/**", "/**", "/api/patients/**"
                 ).permitAll()
                 .anyRequest().authenticated()
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

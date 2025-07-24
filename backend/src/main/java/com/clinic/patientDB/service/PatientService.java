@@ -6,7 +6,10 @@ import com.clinic.patientDB.model.Visit;
 import com.clinic.patientDB.repository.PatientRepository;
 import com.clinic.patientDB.repository.VisitRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.transaction.Transactional;
 import java.io.File;
@@ -70,109 +73,9 @@ public class PatientService {
 
     }
 
-//
-//        Matcher matcher = pattern.matcher(fileName);
-//
-//        if (matcher.find()) {
-//            List<String> extractedFileAttributes = new ArrayList<>();
-//            int groupCount = matcher.groupCount();
-//            String fileType = matcher.group(groupCount);
-//            if (fileType.contains("doc")) {
-//                extractedFileAttributes.add(null);
-//            }
-//            extractedFileAttributes.add(matcher.group());
-    ////            int visitDatePlace = 1;
-    ////            int namePlace = 2;
-    ////            int idOrPassportPlace = 3;
-    ////
-    ////            if (fileType.contains("pdf")) {
-    ////                visitDatePlace = 2;
-    ////                namePlace = 3;
-    ////                idOrPassportPlace = 4;
-    ////            }
-//
-//            // Extracting groups
-//            String updateDateAndTimeStr = extractedFileAttributes.get(0); //matcher.group(1); // Optional: {updateDate updateTime}
-//            String visitDateStr = extractedFileAttributes.get(1);// matcher.group(visitDatePlace);        // Mandatory: visitDate
-//            String name = extractedFileAttributes.get(2);            // Mandatory: name (may include underscores)
-//            String idString = extractedFileAttributes.get(3); //matcher.group(idOrPassportPlace);    // Mandatory: ID or passport
-//
-//            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("ddMMyy");
-//            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("ddMMyy HHmm");
-//            String[] extractedId = extractId(idString);
-//            String idType = extractedId[0];
-//            Long id = Long.parseLong(extractedId[1]);
-//            String actionType = extractedId[2];
-
-
-
-
-//
-//                if (updateDateAndTimeStr != null) {
-//                    // Replace multiple spaces and parse updateDateAndTime
-//                    updateDateAndTimeStr = updateDateAndTimeStr.replaceAll("\\s+", " ");
-//                    visit.addPatientPdfFile(LocalDateTime.parse(updateDateAndTimeStr, dateTimeFormatter), actionType, fileName);
-//                } else{
-//                    System.out.println("filetype is pdf but no update dates");
-//                }
-//            }
-//            patientRepository.save(patient);
-//            return visit;
-//        }
-//        System.out.println("Patient not found");
-//        return null;
-
-
-//    public PatientFile save(String patientFileName, String fileType) {
-//        // 1. פירוק המחרוזת
-//        String[] cut = patientFileName.split("_");
-//        if (fileType.isEmpty()) {
-//            fileType = patientFileName.split("\\.")[1];
-//        }
-//        String patientID = cut[cut.length - 1].replace(fileType, "");
-//        String name = String.join(" ", Arrays.copyOfRange(cut, 1, cut.length - 1));
-//        String dateAndTime = cut[0];
-//        Long id = Patient.getIdFromString(patientID);
-//
-//        // 2. מציאת המטופל
-//        Patient patient = repository.findById(id).orElse(new Patient(name, patientID));
-//
-//        // 3. יצירת הקובץ
-//        PatientFile newFile = new PatientFile(dateAndTime, patient, fileType);
-//        newFile.setFilename(patientFileName);
-//
-//        // 4. הוספת הקובץ לרשימה במיקום המתאים
-//        if (patient.getFiles() == null) {
-//            patient.setFiles(new ArrayList<>());
-//        }
-//        insertFileInOrder(patient.getFiles(), newFile);
-//
-//        // 5. שמירת המטופל
-//        repository.save(patient);
-//        return newFile;
-//    }
-
-//    private void insertFileInOrder(List<PatientFile> files, PatientFile newFile) {
-//        for (int i = 0; i < files.size(); i++) {
-//            if (newFile.getFileType() == ".pdf"){
-//                if (newFile.getUpdateDateAndTime().compareTo(files.get(i).getDate()) > 0) {
-//                    files.add(i, newFile); // הכנסת הקובץ בעמדה המתאימה
-//                    return;
-//                }
-//        }
-//        files.add(newFile); // אם הקובץ הכי פחות מעודכן, הוסף לסוף
-//    }
-
-//    public Patient save(Patient patient) {
-//
-//        return repository.save(patient);
-//    }
-
     public void delete(Patient patient) {
         patientRepository.delete(patient);
     }
-
-
 
     @Transactional
     public Patient updatePatient(Long id, Patient updatedPatient) {
