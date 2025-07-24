@@ -66,28 +66,53 @@
         </GroupBox>
 
         <GroupBox Header="ביקורים" Grid.Column="1">
-            <DataGrid x:Name="VisitsDataGrid" AutoGenerateColumns="False" IsReadOnly="True">
+            <DataGrid x:Name="VisitsDataGrid" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single" SelectionUnit="FullRow" Grid.Row="0">
+                <DataGrid.RowDetailsTemplate>
+                    <DataTemplate>
+                        <Border BorderThickness="0,0,0,1" BorderBrush="LightGray" Padding="10,5" Margin="5">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Description}" TextWrapping="Wrap" Margin="0,5,0,0"/>
+                                <TextBlock Text="סטטוס: {Binding Status}" Margin="0,5,0,0"/>
+                                <StackPanel>
+                                    <Expander Header="קבצים PDF" Margin="0,5,0,0">
+                                        <ItemsControl ItemsSource="{Binding PdfFiles}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                                        <Button Content="פתח" Click="DownloadFile_Click" Padding="10,2" Margin="0,0,5,0"/>
+                                                        <TextBlock Text="{Binding DisplayName}"/>
+                                                        <TextBlock Text=" (PDF)" Foreground="Gray" Margin="0,0,5,0"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </Expander>
+                                    <Expander Header="קבצים DOCX" Margin="0,5,0,0">
+                                        <ItemsControl ItemsSource="{Binding DocFiles}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                                        <Button Content="פתח" Click="DownloadFile_Click" Padding="10,2" Margin="0,0,5,0"/>
+                                                        <TextBlock Text="{Binding DisplayName}"/>
+                                                        <TextBlock Text=" (DOCX)" Foreground="Gray" Margin="0,0,5,0"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </Expander>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </DataGrid.RowDetailsTemplate>
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="תאריך ביקור">
+                    <DataGridTextColumn Header="תאריך ביקור" Width="*">
                         <DataGridTextColumn.Binding>
                             <Binding Path="VisitDate" StringFormat="dd-MM-yyyy HH:mm" />
                         </DataGridTextColumn.Binding>
                     </DataGridTextColumn>
-                    <DataGridTextColumn Header="פרטים" Binding="{Binding Description}" />
-                    <DataGridTemplateColumn Header="PDF">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Content="פתח PDF" CommandParameter="{Binding PdfFilePath}" Click="DownloadPdf_Click" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="DOCX">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Content="פתח DOCX" CommandParameter="{Binding DocFilePath}" Click="DownloadDoc_Click" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="תיאור" Binding="{Binding Description}" Width="*" />
+                    <DataGridTextColumn Header="סטטוס" Binding="{Binding Status}" Width="Auto"/>
                 </DataGrid.Columns>
             </DataGrid>
         </GroupBox>

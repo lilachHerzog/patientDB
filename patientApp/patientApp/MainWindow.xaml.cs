@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using patientApp;
+using patientApp.Extensions;
 
 namespace patientApp
 {
@@ -23,6 +25,9 @@ namespace patientApp
             PatientsListBox.ItemsSource = patients;
             VisitsDataGrid.MouseDoubleClick += VisitsDataGrid_MouseDoubleClick;
             VisitsDataGrid.LoadingRow += VisitsDataGrid_LoadingRow;
+            
+            // Set default row details visibility to collapsed
+            VisitsDataGrid.RowDetailsVisibilityMode = DataGridRowDetailsVisibilityMode.Collapsed;
         }
 
         private void VisitsDataGrid_LoadingRow(object? sender, DataGridRowEventArgs e)
@@ -38,12 +43,15 @@ namespace patientApp
 
         private void VisitsDataGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            var selectedPatient = PatientsListBox.SelectedItem as Patient;
-            if (selectedPatient != null && VisitsDataGrid.SelectedItem is Visit selectedVisit)
+            if (e.OriginalSource is FrameworkElement element && element.DataContext is Visit)
             {
-                var detailsWindow = new VisitDetailsWindow(selectedPatient, selectedVisit);
-                detailsWindow.Owner = this;
-                detailsWindow.ShowDialog();
+                var row = element.ParentOfType<DataGridRow>();
+                if (row != null)
+                {
+                    row.DetailsVisibility = row.DetailsVisibility == Visibility.Visible 
+                        ? Visibility.Collapsed 
+                        : Visibility.Visible;
+                }
             }
         }
 
@@ -62,16 +70,27 @@ namespace patientApp
                     {
                         new Visit {
                             VisitDate = DateTime.Now.AddDays(-10),
-                            Description = "בדיקה רפואית",
-                            PdfFilePath = "C:/Files/JohnDoe_AnnualCheckup.pdf",
-                            DocFilePath = "C:/Files/JohnDoe_AnnualCheckup.docx"
-                        },
+                            Description = "בדיקה רפואית"
+                        }.WithFiles(
+                            ("C:/Files/JohnDoe_AnnualCheckup.pdf", "דו'ח שנתי"),
+                            ("C:/Files/JohnDoe_LabResults.pdf", "תוצאות מעבדה"),
+                            ("C:/Files/JohnDoe_AnnualCheckup.docx", "סיכום ביקור"),
+                            ("C:/Files/JohnDoe_MedicalHistory.docx", "היסטוריה רפואית")
+                        ),
                         new Visit {
                             VisitDate = DateTime.Now.AddDays(-5),
-                            Description = "מעקב רפואי",
-                            PdfFilePath = "C:/Files/JohnDoe_Followup.pdf",
-                            DocFilePath = "C:/Files/JohnDoe_Followup.docx"
-                        }
+                            Description = "ייעוץ ראשוני"
+                        }.WithFiles(
+                            ("C:/Files/JohnDoe_Consultation.pdf", "סיכום ייעוץ"),
+                            ("C:/Files/JohnDoe_Consultation.docx", "היסטוריה רפואית")
+                        ),
+                        new Visit {
+                            VisitDate = DateTime.Now.AddDays(-2),
+                            Description = "מעקב"
+                        }.WithFiles(
+                            ("C:/Files/JohnDoe_FollowUp.pdf", "סיכום מעקב"),
+                            ("C:/Files/JohnDoe_FollowUp.docx", "סיכום מעקב")
+                        )
                     }
                 },
                 new Patient
@@ -82,10 +101,25 @@ namespace patientApp
                     {
                         new Visit {
                             VisitDate = DateTime.Now.AddDays(-20),
-                            Description = "ייעוץ רפואי",
-                            PdfFilePath = "C:/Files/JaneSmith_Consultation.pdf",
-                            DocFilePath = "C:/Files/JaneSmith_Consultation.docx"
-                        }
+                            Description = "ייעוץ רפואי"
+                        }.WithFiles(
+                            ("C:/Files/JaneSmith_Consultation.pdf", "סיכום ייעוץ"),
+                            ("C:/Files/JaneSmith_Consultation.docx", "הערות נוספות")
+                        ),
+                        new Visit {
+                            VisitDate = DateTime.Now.AddDays(-15),
+                            Description = "בדיקת דם"
+                        }.WithFiles(
+                            ("C:/Files/JaneSmith_BloodTest.pdf", "תוצאות בדיקות דם"),
+                            ("C:/Files/JaneSmith_BloodTest.docx", "הערות רופא")
+                        ),
+                        new Visit {
+                            VisitDate = DateTime.Now.AddDays(-11),
+                            Description = "הפניה רפואית",
+                        }.WithFiles(
+                            ("C:/Files/JaneSmith_Consultation.pdf", "סיכום הפנייה רפואית"),
+                            ("C:/Files/JaneSmith_Consultation.docx", "הערות רופא")
+                        )
                     }
                 },
                 new Patient
@@ -97,21 +131,24 @@ namespace patientApp
                         new Visit {
                             VisitDate = DateTime.Now.AddDays(-40),
                             Description = "בדיקה רפואית",
-                            PdfFilePath = "C:/Files/JaneSmith_Consultation.pdf",
-                            DocFilePath = "C:/Files/JaneSmith_Consultation.docx"
-                        },
+                        }.WithFiles(
+                            ("C:/Files/JaneSmith_Consultation.pdf", "סיכום הפנייה רפואית"),
+                            ("C:/Files/JaneSmith_Consultation.docx", "הערות רופא")
+                        ),
                         new Visit {
                             VisitDate = DateTime.Now.AddDays(-20),
                             Description = "טיפול רפואי",
-                            PdfFilePath = "C:/Files/JaneSmith_Consultation.pdf",
-                            DocFilePath = "C:/Files/JaneSmith_Consultation.docx"
-                        },
+                        }.WithFiles(
+                            ("C:/Files/JaneSmith_Consultation.pdf", "סיכום הפנייה רפואית"),
+                            ("C:/Files/JaneSmith_Consultation.docx", "הערות רופא")
+                        ),
                         new Visit {
                             VisitDate = DateTime.Now.AddDays(-11),
                             Description = "הפניה רפואית",
-                            PdfFilePath = "C:/Files/JaneSmith_Consultation.pdf",
-                            DocFilePath = "C:/Files/JaneSmith_Consultation.docx"
-                        }
+                        }.WithFiles(
+                            ("C:/Files/JaneSmith_Consultation.pdf", "סיכום הפנייה רפואית"),
+                            ("C:/Files/JaneSmith_Consultation.docx", "הערות רופא")
+                        )
                     }
                 }
             };
@@ -127,6 +164,15 @@ namespace patientApp
             if (selectedPatient != null)
             {
                 VisitsDataGrid.ItemsSource = selectedPatient.Visits;
+                // Collapse all row details when changing patients
+                foreach (var item in VisitsDataGrid.Items)
+                {
+                    var row = VisitsDataGrid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
+                    if (row != null)
+                    {
+                        row.DetailsVisibility = Visibility.Collapsed;
+                    }
+                }
             }
             else
             {
@@ -220,15 +266,65 @@ namespace patientApp
 
         private void DownloadPdf_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button button && button.CommandParameter is string pdfFilePath)
+            if (sender is Button button && button.DataContext is Visit visit)
             {
+                OpenFiles(visit.PdfFilePaths);
+            }
+        }
+
+        private void OpenFiles(IEnumerable<string> filePaths)
+        {
+            foreach (var filePath in filePaths)
+            {
+                if (!string.IsNullOrEmpty(filePath) && System.IO.File.Exists(filePath))
+                {
+                    Process.Start(new ProcessStartInfo(filePath) { UseShellExecute = true });
+                }
+            }
+        }
+
+        private void DownloadFile_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.DataContext is FileAttachment file)
+            {
+                if (file == null || string.IsNullOrEmpty(file.FilePath))
+                {
+                    MessageBox.Show("לא ניתן לפתוח קובץ: נתיב הקובץ חסר או לא תקין", "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
                 try
                 {
-                    Process.Start(new ProcessStartInfo(pdfFilePath) { UseShellExecute = true });
+                    if (File.Exists(file.FilePath))
+                    {
+                        Process.Start(new ProcessStartInfo(file.FilePath) { UseShellExecute = true });
+                    }
+                    else
+                    {
+                        var result = MessageBox.Show("הקובץ לא נמצא. האם ברצונך לחפש אותו?", "קובץ לא נמצא", 
+                            MessageBoxButton.YesNo, MessageBoxImage.Question);
+                        
+                        if (result == MessageBoxResult.Yes)
+                        {
+                            var openFileDialog = new Microsoft.Win32.OpenFileDialog
+                            {
+                                Title = "אתר את הקובץ",
+                                Filter = $"{file.FileType} files|*{Path.GetExtension(file.FilePath)}|All files|*.*",
+                                FileName = Path.GetFileName(file.FilePath)
+                            };
+
+                            if (openFileDialog.ShowDialog() == true)
+                            {
+                                // Update the file path if user selects a new one
+                                file.FilePath = openFileDialog.FileName;
+                                Process.Start(new ProcessStartInfo(file.FilePath) { UseShellExecute = true });
+                            }
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"לא ניתן לפתוח קובץ PDF: {ex.Message}");
+                    MessageBox.Show($"שגיאה בפתיחה של הקובץ: {ex.Message}", "שגיאה", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }

@@ -1,13 +1,15 @@
 <Window x:Class="patientApp.VisitDetailsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="פרטי ביקור" Height="250" Width="400"
+        Title="פרטי ביקור" Height="400" Width="500"
         FontFamily="Segoe UI" FlowDirection="RightToLeft">
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
@@ -18,9 +20,150 @@
         </StackPanel>
         <TextBlock x:Name="VisitDateText" FontSize="14" Grid.Row="1" Margin="0,0,0,10"/>
         <TextBlock x:Name="DescriptionText" FontSize="14" Grid.Row="2" Margin="0,0,0,10" TextWrapping="Wrap"/>
-        <StackPanel Orientation="Horizontal" Grid.Row="3" Margin="0,0,0,10">
-            <Button x:Name="OpenPdfButton" Content="פתח PDF" Width="100" Margin="0,0,10,0" Click="OpenPdfButton_Click"/>
-            <Button x:Name="OpenDocButton" Content="פתח DOCX" Width="100" Click="OpenDocButton_Click"/>
-        </StackPanel>
+        
+        <TextBlock Text="קבצים מצורפים" FontWeight="Bold" Grid.Row="3" Margin="0,10,0,5" FontSize="14"/>
+        <TabControl Grid.Row="4" Margin="0,0,0,10" BorderThickness="1" BorderBrush="LightGray" Background="White">
+            <TabItem x:Name="PdfTab" Header="PDF (0)">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    
+                    <ListBox x:Name="PdfFilesListBox" 
+                            BorderThickness="0" 
+                            Background="Transparent"
+                            ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="Padding" Value="0"/>
+                                <Setter Property="Margin" Value="0,2"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#F0F0F0"/>
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="#E0E0E0"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="5,3">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <Image Grid.Column="0" 
+                                           Source="/Images/pdf_icon.png" 
+                                           Width="20" 
+                                           Height="20" 
+                                           VerticalAlignment="Center"
+                                           Margin="0,0,5,0"/>
+                                            
+                                    <TextBlock Grid.Column="1" 
+                                               Text="{Binding DisplayName}" 
+                                               TextTrimming="CharacterEllipsis" 
+                                               VerticalAlignment="Center"
+                                               ToolTip="{Binding FilePath}"
+                                               Margin="5,0"/>
+                                               
+                                    <Button Grid.Column="2" 
+                                            Content="פתח" 
+                                            Padding="15,3"
+                                            CommandParameter="{Binding}" 
+                                            Click="OpenFile_Click"
+                                            Style="{StaticResource MaterialDesignFlatButton}"
+                                            Foreground="#1976D2"
+                                            Cursor="Hand"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    
+                    <TextBlock Grid.Row="1" 
+                               Text="לא נמצאו קבצי PDF" 
+                               HorizontalAlignment="Center" 
+                               VerticalAlignment="Center"
+                               Margin="10"
+                               Foreground="Gray"
+                               Visibility="{Binding PdfFilesListBox.Items.Count, Converter={StaticResource IntToVisibilityConverter}, ElementName=PdfFilesListBox}"/>
+                </Grid>
+            </TabItem>
+            
+            <TabItem x:Name="DocTab" Header="DOCX (0)">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    
+                    <ListBox x:Name="DocFilesListBox" 
+                            BorderThickness="0" 
+                            Background="Transparent"
+                            ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="Padding" Value="0"/>
+                                <Setter Property="Margin" Value="0,2"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#F0F0F0"/>
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="#E0E0E0"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="5,3">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <Image Grid.Column="0" 
+                                           Source="/Images/word_icon.png" 
+                                           Width="20" 
+                                           Height="20" 
+                                           VerticalAlignment="Center"
+                                           Margin="0,0,5,0"/>
+                                            
+                                    <TextBlock Grid.Column="1" 
+                                               Text="{Binding DisplayName}" 
+                                               TextTrimming="CharacterEllipsis" 
+                                               VerticalAlignment="Center"
+                                               ToolTip="{Binding FilePath}"
+                                               Margin="5,0"/>
+                                               
+                                    <Button Grid.Column="2" 
+                                            Content="פתח" 
+                                            Padding="15,3"
+                                            CommandParameter="{Binding}" 
+                                            Click="OpenFile_Click"
+                                            Style="{StaticResource MaterialDesignFlatButton}"
+                                            Foreground="#1976D2"
+                                            Cursor="Hand"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    
+                    <TextBlock Grid.Row="1" 
+                               Text="לא נמצאו קבצי DOCX" 
+                               HorizontalAlignment="Center" 
+                               VerticalAlignment="Center"
+                               Margin="10"
+                               Foreground="Gray"
+                               Visibility="{Binding DocFilesListBox.Items.Count, Converter={StaticResource IntToVisibilityConverter}, ElementName=DocFilesListBox}"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>
