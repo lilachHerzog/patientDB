@@ -41,7 +41,6 @@
                            Margin="0,0,0,5">
                     <DatePicker.Resources>
                         <Style TargetType="DatePickerTextBox">
-                            <Setter Property="Text" Value="חפש לפי תאריך" />
                             <Setter Property="Foreground" Value="Gray" />
                         </Style>
                     </DatePicker.Resources>
